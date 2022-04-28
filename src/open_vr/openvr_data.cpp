@@ -233,6 +233,7 @@ bool openvr_data::initialise() {
 					Godot::print(godot::String("Error code ") + String(err));
 				} else {
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+					break;
 				}
 			}
 		}
