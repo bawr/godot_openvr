@@ -3,6 +3,9 @@
 
 #include "openvr_data.h"
 
+#include <chrono>
+#include <thread>
+
 using namespace godot;
 
 openvr_data *openvr_data::singleton = NULL;
@@ -223,9 +226,14 @@ bool openvr_data::initialise() {
 		bind_default_action_handles();
 
 		for (std::vector<action_set>::iterator it = action_sets.begin(); it != action_sets.end(); ++it) {
-			vr::EVRInputError err = vr::VRInput()->GetActionSetHandle(it->name.utf8().get_data(), &it->handle);
-			if (err != vr::VRInputError_None) {
-				Godot::print(godot::String("Failed to obtain action set handle for ") + String(it->name));
+			for (int i = 0; i < 10; i++) {
+				vr::EVRInputError err = vr::VRInput()->GetActionSetHandle(it->name.utf8().get_data(), &it->handle);
+				if (err != vr::VRInputError_None) {
+					Godot::print(godot::String("Failed to obtain action set handle for ") + String(it->name));
+					Godot::print(godot::String("Error code ") + String(err));
+				} else {
+					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				}
 			}
 		}
 
